@@ -1,0 +1,41 @@
+{% extends "library/base.html" %}
+
+{% block title %}Library — All Books{% endblock %}
+
+{% block content %}
+<h1>Books</h1>
+
+{% if genres %}
+<div class="filters">
+    <a href="{% url 'library:home' %}" class="{% if not selected_genre %}active{% endif %}">All</a>
+    {% for g in genres %}
+    <a href="{% url 'library:home' %}?genre={{ g.name }}"
+       class="{% if selected_genre == g.name %}active{% endif %}">{{ g.name }}</a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% for book in books %}
+<div class="card">
+    <h3><a href="{% url 'library:book_detail' book.pk %}">{{ book.title }}</a></h3>
+    <p class="meta">
+        by <a href="{% url 'library:author_detail' book.author.pk %}">{{ book.author }}</a>
+        {% if book.published_date %} &middot; {{ book.published_date|date:"Y" }}{% endif %}
+    </p>
+    <div>
+        {% for genre in book.genre.all %}
+        <span class="badge">{{ genre.name }}</span>
+        {% endfor %}
+        {% if book.available %}
+        <span class="badge badge-available">Available</span>
+        {% else %}
+        <span class="badge badge-unavailable">Checked out</span>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="card">
+    <p>No books in the library yet. <a href="/admin/">Add some via the admin panel.</a></p>
+</div>
+{% endfor %}
+{% endblock %}

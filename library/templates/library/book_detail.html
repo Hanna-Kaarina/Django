@@ -1,0 +1,37 @@
+{% extends "library/base.html" %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'library:home' %}" class="back-link">&larr; Back to all books</a>
+
+<div class="card">
+    <h1 class="detail-header">{{ book.title }}</h1>
+    <p class="meta">
+        by <a href="{% url 'library:author_detail' book.author.pk %}">{{ book.author }}</a>
+    </p>
+
+    {% if book.published_date %}
+    <p class="meta">Published: {{ book.published_date|date:"F j, Y" }}</p>
+    {% endif %}
+
+    {% if book.isbn %}
+    <p class="meta">ISBN: {{ book.isbn }}</p>
+    {% endif %}
+
+    <div style="margin-top: 0.5rem;">
+        {% for genre in book.genre.all %}
+        <span class="badge">{{ genre.name }}</span>
+        {% endfor %}
+        {% if book.available %}
+        <span class="badge badge-available">Available</span>
+        {% else %}
+        <span class="badge badge-unavailable">Checked out</span>
+        {% endif %}
+    </div>
+
+    {% if book.summary %}
+    <p class="summary">{{ book.summary }}</p>
+    {% endif %}
+</div>
+{% endblock %}
